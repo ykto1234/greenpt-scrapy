@@ -1,0 +1,7 @@
+__pycache__
+.scrapy
+build
+dist
+log
+output
+httpcache
