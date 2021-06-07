@@ -1,3 +1,5 @@
+import logging
+from scrapy.utils.log import configure_logging
 import scrapy
 from bs4 import BeautifulSoup
 from greenpt_scrapy.items import GreenptScrapyItem
@@ -7,6 +9,12 @@ import mylogger
 import urllib
 logger = mylogger.setup_logger(__name__)
 logger.info('プログラム起動開始')
+
+LOG_FILE = "./spider.log"
+ERR_FILE = "./spider_error.log"
+configure_logging()
+logging.basicConfig(level=logging.INFO, filemode="w+", filename=LOG_FILE)
+logging.basicConfig(level=logging.ERROR, filemode="w+", filename=ERR_FILE)
 
 
 class CategoryInfo:
@@ -30,6 +38,8 @@ class ScrapyGreenptSpiderSpider(scrapy.Spider):
         super(ScrapyGreenptSpiderSpider, self).__init__(*args, **kwargs)
 
     def start_requests(self):
+        logger.info('スクレイピング開始')
+        logger.info(self.url)
         yield scrapy.Request(self.url, callback=self.category_list_parse)
 
     def category_list_parse(self, response):
@@ -105,10 +115,6 @@ class ScrapyGreenptSpiderSpider(scrapy.Spider):
             _soup = BeautifulSoup(response.text, 'html.parser')
             item_container_eles = _soup.select(item_container_sel)
 
-            if not category_name:
-                print('sssss')
-                pass
-
             for item_container_ele in item_container_eles:
                 item_name_ele = item_container_ele.select(item_name_sel)
                 item_tag_ele = item_container_ele.select(item_tag_sel)
@@ -127,7 +133,6 @@ class ScrapyGreenptSpiderSpider(scrapy.Spider):
             disable_next_page_eles = _soup.select(disable_next_page_sel)
             if len(disable_next_page_eles):
                 # 次のページボタンが非活性の場合
-                print('ss')
                 return
 
             if len(next_page_eles):

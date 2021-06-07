@@ -4,14 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-scrapy = "*"
+scrapy = "==1.8.0"
 bs4 = "*"
 pandas = "*"
 openpyxl = "*"
-pyinstaller = "==4.1"
 
 [dev-packages]
 autopep8 = "*"
+pyinstaller = "==4.1"
 
 [requires]
 python_version = "3.9"
