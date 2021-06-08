@@ -13,16 +13,7 @@ import datetime
 
 
 class GreenptScrapyPipeline(object):
-    output_list = []
-    index = 1
-
     def __init__(self):
-        dt_now = datetime.datetime.now()
-        day_str = dt_now.strftime('%Y-%m-%d')
-        now_str = dt_now.strftime('%Y-%m-%d_%H%M%S')
-        self.filename = '出力結果_' + now_str + '.xlsx'
-        self.dirname = day_str
-
         pass
 
     @classmethod
@@ -33,17 +24,7 @@ class GreenptScrapyPipeline(object):
         pass
 
     def close_spider(self, spider):
-        # クローズ時に余っている分を出力
-        excel.out_to_excel(self.output_list, self.filename,
-                           self.dirname, '出力結果' + str(self.index))
+        pass
 
     def process_item(self, item, spider):
-        self.output_list.append(item)
-
-        if len(self.output_list) >= 5000:
-            excel.out_to_excel(self.output_list, self.filename,
-                               self.dirname, '出力結果' + str(self.index))
-            self.output_list = []
-            self.index += 1
-
-        return item
+        pass
