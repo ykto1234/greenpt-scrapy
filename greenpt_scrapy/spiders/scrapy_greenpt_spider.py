@@ -80,7 +80,6 @@ class ScrapyGreenptSpiderSpider(scrapy.Spider):
                     '?otherItem=&keyword=&prefId=&theme=&pointH=&pointRadioId=&outTerm=&noStock=&subId=' + category_info.id
                 request = scrapy.Request(
                     item_list_url, callback=self.item_list_parse)
-                # request.meta['category_title'] = category_info.category_title
                 yield request
 
             return
@@ -103,7 +102,6 @@ class ScrapyGreenptSpiderSpider(scrapy.Spider):
             next_page_sel = 'a.pager__btn-next'
             disable_next_page_sel = 'a.pager__btn-next.pager__btn--disabled'
 
-            # category_name = response.meta.get('category_title')
             qs = urllib.parse.urlparse(response.url).query
             qs_d = urllib.parse.parse_qs(qs)
             target_id = qs_d['subId'][0]
@@ -126,7 +124,6 @@ class ScrapyGreenptSpiderSpider(scrapy.Spider):
                 item['item_tag'] = item_tag_ele[0].text
                 item['item_point'] = item_point_ele[0].text
                 item['company'] = item_company_ele[0].text
-                # yield item
                 yield self.output_excel(item)
 
             next_page_eles = _soup.select(next_page_sel)
