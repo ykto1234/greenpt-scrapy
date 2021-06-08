@@ -1,20 +1,16 @@
 import logging
-from scrapy.utils.log import configure_logging
 import scrapy
 from bs4 import BeautifulSoup
 from greenpt_scrapy.items import GreenptScrapyItem
+import excel
 
 # ログの定義
 import mylogger
 import urllib
+import datetime
+import os
 logger = mylogger.setup_logger(__name__)
 logger.info('プログラム起動開始')
-
-LOG_FILE = "./spider.log"
-ERR_FILE = "./spider_error.log"
-configure_logging()
-logging.basicConfig(level=logging.INFO, filemode="w+", filename=LOG_FILE)
-logging.basicConfig(level=logging.ERROR, filemode="w+", filename=ERR_FILE)
 
 
 class CategoryInfo:
@@ -26,16 +22,19 @@ class CategoryInfo:
 class ScrapyGreenptSpiderSpider(scrapy.Spider):
     name = 'scrapy_greenpt_spider'
     allowed_domains = ['goods.greenpt.mlit.go.jp']
-    # start_urls = [
-    #     'https://goods.greenpt.mlit.go.jp/apl/public/viewShouhinList']
-
-    # index = 1
     url = 'https://goods.greenpt.mlit.go.jp/apl/public/viewShouhinList'
     # カテゴリのIDとタイトルのリスト
     category_list = []
+    output_list = []
+    index = 1
 
     def __init__(self, *args, **kwargs):
         super(ScrapyGreenptSpiderSpider, self).__init__(*args, **kwargs)
+        dt_now = datetime.datetime.now()
+        day_str = dt_now.strftime('%Y-%m-%d')
+        now_str = dt_now.strftime('%Y-%m-%d_%H%M%S')
+        self.filename = '出力結果_' + now_str + '.xlsx'
+        self.dirname = day_str
 
     def start_requests(self):
         logger.info('スクレイピング開始')
@@ -127,7 +126,8 @@ class ScrapyGreenptSpiderSpider(scrapy.Spider):
                 item['item_tag'] = item_tag_ele[0].text
                 item['item_point'] = item_point_ele[0].text
                 item['company'] = item_company_ele[0].text
-                yield item
+                # yield item
+                yield self.output_excel(item)
 
             next_page_eles = _soup.select(next_page_sel)
             disable_next_page_eles = _soup.select(disable_next_page_sel)
@@ -154,3 +154,26 @@ class ScrapyGreenptSpiderSpider(scrapy.Spider):
             traceback.print_exc()
             err_message = traceback.format_exc()
             logger.error(err_message)
+
+    def output_excel(self, item):
+        self.output_list.append(item)
+
+        if len(self.output_list) >= 10000:
+            excel.out_to_excel(self.output_list, self.filename,
+                               self.dirname, '出力結果' + str(self.index))
+            logger.info('出力結果' + str(self.index) + 'を出力しました。')
+            self.output_list = []
+            self.index += 1
+
+        return item
+
+    def closed(self, reason):
+        # クローズ時に余っている分を出力
+        excel.out_to_excel(self.output_list, self.filename,
+                           self.dirname, '出力結果' + str(self.index))
+        logger.info('スクレイピング処理完了')
+        print('----------------------------------------------------')
+        print('          スクレイピング処理が完了しました')
+        print('----------------------------------------------------')
+        # 『続行するには何かキーを押してください . . .』と表示させる
+        os.system('PAUSE')

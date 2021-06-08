@@ -7,13 +7,6 @@ import datetime
 
 def out_to_excel(data_list, filename, dirname, title_name):
 
-    # リストから店名が重複する行を削除する
-    # data_set = set(data_list)
-
-    # dt_now = datetime.datetime.now()
-    # day_str = dt_now.strftime('%Y-%m-%d')
-    # now_str = dt_now.strftime('%Y-%m-%d_%H%M%S')
-
     os.makedirs('./output/' + dirname, exist_ok=True)
     file_path = './output/' + dirname + '/' + filename
 

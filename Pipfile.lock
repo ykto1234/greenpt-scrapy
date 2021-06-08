@@ -403,7 +403,6 @@
             "version": "==2.2.1"
         },
         "twisted": {
-            "extras": [],
             "hashes": [
                 "sha256:77544a8945cf69b98d2946689bbe0c75de7d145cdf11f391dd487eae8fc95a12",
                 "sha256:aab38085ea6cda5b378b519a0ec99986874921ee8881318626b0a3414bb2631e"

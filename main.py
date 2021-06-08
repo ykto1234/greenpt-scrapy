@@ -4,13 +4,17 @@ from greenpt_scrapy.spiders.scrapy_greenpt_spider import ScrapyGreenptSpiderSpid
 from scrapy.utils.project import get_project_settings
 from multiprocessing import Process, Queue
 from twisted.internet import reactor
+from scrapy.utils.log import configure_logging
+import logging
+import os
 
 
 def call_spider(queue):
     try:
-        runner = CrawlerRunner({
-            'USER_AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0 Safari/605.1.15'
-        })
+        configure_logging()
+        logging.basicConfig(level=logging.DEBUG)
+
+        runner = CrawlerRunner()
         deferred = runner.crawl(ScrapyGreenptSpiderSpider)
         deferred.addBoth(lambda _: reactor.stop())
         reactor.run()
@@ -44,4 +48,10 @@ if __name__ == '__main__':
     mp.freeze_support()
 
     # execute_spider_single()
+    # 『続行するには何かキーを押してください . . .』と表示させる
+    print('----------------------------------------------------')
+    print('          スクレイピング処理を開始します。')
+    print('  ※中止する場合は、×ボタンで画面を閉じてください。')
+    print('----------------------------------------------------')
+    os.system('PAUSE')
     execute_spider()

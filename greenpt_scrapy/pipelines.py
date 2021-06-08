@@ -16,19 +16,18 @@ class GreenptScrapyPipeline(object):
     output_list = []
     index = 1
 
-    def __init__(self, collection_name):
+    def __init__(self):
         dt_now = datetime.datetime.now()
         day_str = dt_now.strftime('%Y-%m-%d')
         now_str = dt_now.strftime('%Y-%m-%d_%H%M%S')
         self.filename = '出力結果_' + now_str + '.xlsx'
         self.dirname = day_str
+
         pass
 
     @classmethod
     def from_crawler(cls, crawler):
-        return cls(
-            collection_name='version'
-        )
+        pass
 
     def open_spider(self, spider):
         pass
